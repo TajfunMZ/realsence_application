@@ -42,3 +42,17 @@ I am using the tools listed below, but so long as the dependencies above are ful
 
 You can check the included librares and its versions by running *conda list* in your terminal.
 Unles specified otherwise, please keep your dependencies up to date.
+
+
+### Use instructions
+
+1. Connect the realsence camera to a usb port 3 or higher.
+2. Open vs code and run the main file in python.
+3. At need add variables after the file name as stated in the receaved message
+
+**Syntax**
+.../main.py {programe mode} {file name} {other options seperated by space}
+
+**Examples:**
+.../main.py calibrate file_name float(zero volume, if you want to set the volume of an empty object yourself) bool(auto detect color targets) bool(save pcd)
+.../main.py measure file_name number_of_iterrations save_file_name_extencion(If you want more measurments with the same configuration file and a more recognisable name)
