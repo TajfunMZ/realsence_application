@@ -37,8 +37,8 @@ I am using the tools listed below, but so long as the dependencies above are ful
   - On Anaconda create a new environment and add the needed python libraries
   - Activate Anaconda in the terminal (open the terminal of the environment by clicking the play button of the environment in anaconda)
   - Add external libraries to the environment by running the following commands:
-    - pip install --user open3d
-    - pip install --user pyrealsense2
+    - pip install open3d
+    - pip install pyrealsense2
 
 You can check the included librares and its versions by running *conda list* in your terminal.
 Unles specified otherwise, please keep your dependencies up to date.
