@@ -48,7 +48,8 @@ Unles specified otherwise, please keep your dependencies up to date.
 
 1. Connect the realsence camera to a usb port 3 or higher.
 2. Open vs code and run the main file in python.
-3. At need add variables after the file name as stated in the receaved message
+3. At need add variables after the file name as stated in the receaved message.
+4. If necesarry add the necesarry files for the code to store data.
 
 **Syntax**
 .../main.py {programe mode} {file name} {other options seperated by space}
