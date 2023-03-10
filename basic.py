@@ -5,7 +5,7 @@ from mathF import preformVolumeCalculations, getRotationMatrix, rectangleFromPoi
 from cameraF import getPCD, getPointCoords, selectAreaWithPoints, createBoundingBox, plotGeometriesWithOriginVectors, createBox
 
 CROP_HEIGHT = 4             # If the cropbox cuts of the pile in the z coordinate, increase this
-CROP_EDGE = 1         # It is the added distance between points devided by crop_edge_factor
+CROP_EDGE = 1               # It is the added distance between points devided by crop_edge_factor
 
 # get rotated pcd and new rotated points
 def rotateImage(pcd, pointIndex, automaticAlignment):
