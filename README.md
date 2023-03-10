@@ -7,7 +7,7 @@ Functions for the implementation of the realsence camera, using its rgb and dept
   - Calculate distance between different points (currently selected by color and clustering)
 
 
-## Dependencies
+### Dependencies
 
   - Python >= 3.9
   - open3d >= 0.16
@@ -20,20 +20,22 @@ Optional:
   - *cv2*
 
 
-## Environment & setup
+### Environment & setup
 
 I am using the tools listed below, but so long as the dependencies above are fullfiled any other alternative is acceptable. Italic items are optional.
+ 
  **Editor & extencions:**
  - visual studio code (with extencions)
     - python
     - *GitLens*
  - Anaconda
 
+
 **Setup:**
   - Install vs code and its extencions
   - Install Anaconda
   - On Anaconda create a new environment and add the needed python libraries
-  - Activate Anaconda in the terminal (can also be done by trying to run the code in vs code by clicking the run button that appears after adding the python extension)
+  - Activate Anaconda in the terminal (open the terminal of the environment by clicking the play button of the environment in anaconda)
   - Add external libraries to the environment by running the following commands:
     - pip install --user open3d
     - pip install --user pyrealsense2
