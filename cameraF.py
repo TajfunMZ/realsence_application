@@ -4,8 +4,8 @@ import numpy as np
 import pyrealsense2 as rs
 import copy
 
-DOWN_FACTOR = -1 # Value changed -> 0.06   # Defines the number of points that are used for volume calculation. if downsample_factor <= 0 : action is skipped
-SCALE_FACTOR = 0.225
+DOWN_FACTOR = -1    # Value changed -> 0.06   # Defines the number of points that are used for volume calculation. if downsample_factor <= 0 : action is skipped
+SCALE_FACTOR = 1    # 0.225
 
 # Initialize D435 depth camera, capture only depth data, not RGB
 def initCamera(capture_rgb = True):
@@ -38,7 +38,7 @@ def initCamera(capture_rgb = True):
         color_sensor = profile.get_device().first_color_sensor()
         color_sensor.set_option(rs.option.enable_auto_exposure, 1)
         color_sensor.set_option(rs.option.auto_exposure_priority, 1)
-        color_sensor.set_option(rs.option.enable_auto_white_balance, 1)
+        color_sensor.set_option(rs.option.enable_auto_white_balance, 0)
         color_sensor.set_option(rs.option.brightness, -64)
         color_sensor.set_option(rs.option.contrast, 0)
         color_sensor.set_option(rs.option.gamma, 100)
@@ -48,7 +48,7 @@ def initCamera(capture_rgb = True):
 
     depth_sensor = profile.get_device().first_depth_sensor()
     depth_sensor.set_option(rs.option.enable_auto_exposure, 1); # Enable auto exposure
-    depth_sensor.set_option(rs.option.depth_units, 0.0002) # Set depth units from 1mm to 0.2mm. This decreases camera range but increases depth accuracy
+    depth_sensor.set_option(rs.option.depth_units, 0.0001) # Set depth units from 1mm to 0.2mm. This decreases camera range but increases depth accuracy
     depth_table = advncd_mode_cfg.get_depth_table()
     depth_table.depthClampMax = 65535   # Set max range to max possible value at current depth units (16 bit)
     advncd_mode_cfg.set_depth_table(depth_table)
@@ -143,7 +143,7 @@ def getMarkerPoints(pcd):
     # Create pcd and cluster points
     pcd_filterd = o3d.geometry.PointCloud()
     pcd_filterd.points = o3d.utility.Vector3dVector(points)
-    point_class_vector = pcd_filterd.cluster_dbscan(0.5 * SCALE_FACTOR, 4, True)
+    point_class_vector = pcd_filterd.cluster_dbscan(0.3 * SCALE_FACTOR, 50, True)
 
     return [point_class_vector, pcd_filterd]
 

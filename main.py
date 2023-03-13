@@ -81,7 +81,7 @@ if __name__ == '__main__':
                     for i, field in enumerate(fields):
                         sheet.write(0, i, field, bold)
 
-                    iterr = [round(0.001 + x * 0.001, 4) for x in range(0, 5000)] #[round(0.700 + x * 0.0001, 4) for x in range(0, 301)] # from 0.7 to 0.73 by 0.0001
+                    iterr = [round(0.001 + x * 0.001, 4) for x in range(0, 2000)] #[round(0.700 + x * 0.0001, 4) for x in range(0, 301)] # from 0.7 to 0.73 by 0.0001
                     data = findOptimalParameters(pipe, iterr)
                         
                     # iterating through the content list

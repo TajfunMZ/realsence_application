@@ -43,7 +43,7 @@ def loadCalibration(calibrationFileName):
 
 
 # select points and rotate the pointcloud
-def selectAndRotate(pcd_o, automaticAlignment, point_class_vector, targets_pcd = 0):
+def selectAndRotate(pcd_o, automaticAlignment, point_class_vector = [], targets_pcd = 0):
     auto_select = False if targets_pcd == 0 else True
     # Select points to define crop area and floor plane angle
     if not auto_select:
