@@ -53,6 +53,10 @@ def initCamera(capture_rgb = True):
     depth_table.depthClampMax = 65535   # Set max range to max possible value at current depth units (16 bit)
     advncd_mode_cfg.set_depth_table(depth_table)
 
+    # Calibrate autoexposure
+    for x in range(20):
+        pipe.wait_for_frames()
+
     return pipe
 
 
@@ -68,8 +72,9 @@ def capture_pcd(pipe, down_sample_size, mode):
     temp_filter = rs.temporal_filter()
     
     # Align images
-    for x in range(10):
+    for i in range(20):
         frame = pipe.wait_for_frames()
+
         # Filter frame
         dec_filter.process(frame)
         tresh_filter.process(frame)
@@ -229,7 +234,7 @@ def removeOutliers(pcd, outlier_neigbours):
 
 # Save PCD
 def savePCD(pcd, name):
-    o3d.io.write_point_cloud("/assets/" + name + '.ply', pcd, write_ascii=False, compressed=False, print_progress=False)
+    o3d.io.write_point_cloud("/realsence_application/assets/" + name + '.ply', pcd, write_ascii=False, compressed=False, print_progress=False)
 
 
 # define open3d box
@@ -239,7 +244,7 @@ def createBox(width, height, depth):
 
 # open point cloud from file
 def loadPCD(file):
-    return o3d.io.read_point_cloud("/assets/" + file, print_progress = True)
+    return o3d.io.read_point_cloud("/realsence_application/assets/" + file, print_progress = True)
 
 
 # Draww with real colours

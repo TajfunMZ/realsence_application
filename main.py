@@ -37,23 +37,22 @@ if __name__ == '__main__':
                     no_iterrations = int(sys.argv[3]) if no_arguments >= 4 else 10
                     name_extention = sys.argv[4] if no_arguments >=5 else ''
 
-                    full_path = "/configuration_files/" + file_name
-                    if(os.path.isfile(full_path + '.json')):
+                    if(os.path.isfile('./configuration_files/' + file_name + '.json')):
                         # Load point coordinates and pcd rotation matrix
-                        calibration_json = loadCalibration(full_path)
+                        calibration_json = loadCalibration(file_name)
                     else:
                         # If no file is present calibrate and load
                         print('Calibration file not found. Calibrating...')
-                        captureReference(file_name, pipe, -1, True, True, 10, False)
+                        captureReference(file_name, pipe, -1, True, False, 10, False)
                         input('\nEnter anything to continuing collecting measurments.')
 
                         # Load point coordinates and pcd rotation matrix
-                        calibration_json = loadCalibration(full_path)
+                        calibration_json = loadCalibration(file_name)
                     
                     milis_since_epoch = round(time.time()*1000)
                     save_file = file_name + '_' + name_extention + '_' + str(milis_since_epoch) + '.csv'
                     # Open results csv and add time in miliseconds to not overwrite existing results
-                    with open("/csv_results/" + save_file, 'w', newline='') as file:
+                    with open("./csv_results/" + save_file, 'w', newline='') as file:
                         writer = csv.writer(file)
                         writer.writerow(["Iterration number", "Volume [m^3]", "Volume difference [m^3]", "Time"])
 

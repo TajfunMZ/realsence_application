@@ -6,7 +6,7 @@ from basic import selectAndRotate
 from functools import reduce
 import matplotlib.pyplot as plt
 
-SCALE = 0.1
+SCALE = 1
 
 if __name__ == '__main__':
     # init pipeline, pointcloud and configure camera settings
@@ -67,45 +67,46 @@ if __name__ == '__main__':
     advncd_mode_cfg.set_depth_table(depth_table)
 
     # Align images
-    for x in range(10):
+    for x in range(20):
         frame = pipe.wait_for_frames()
+        frame = align.process(frame)
+        
         # Filter frame
         dec_filter.process(frame)
         tresh_filter.process(frame)
         disparity_filter.process(frame)
         temp_filter.process(frame)
-        
-        aligned_frames = align.process(frame)
 
     # Grab camera data
     if found_rgb:
-        color_frame = aligned_frames.get_color_frame()
+        color_frame = frame.get_color_frame()
         color_image = np.asanyarray(color_frame.get_data())
         color_image_o3d = o3d.geometry.Image(color_image)
         
-    depth_frame = aligned_frames.get_depth_frame()
+    depth_frame = frame.get_depth_frame()
     depth_image = np.asanyarray(depth_frame.get_data())
     depth_image_o3d = o3d.geometry.Image(depth_image)
 
-    intrinsics = aligned_frames.profile.as_video_stream_profile().intrinsics
+    intrinsics = frame.profile.as_video_stream_profile().intrinsics
     pinhole_camera_intrinsic = o3d.camera.PinholeCameraIntrinsic(intrinsics.width, intrinsics.height, intrinsics.fx, intrinsics.fy, intrinsics.ppx, intrinsics.ppy)
     
-    print(intrinsics)
-    print(pinhole_camera_intrinsic.intrinsic_matrix)
+    # print(intrinsics)
+    # print(pinhole_camera_intrinsic.intrinsic_matrix)
 
     # Convert to o3d
     if found_rgb:
-        rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(color_image_o3d, depth_image_o3d, depth_scale=1000.0, depth_trunc=30.0, convert_rgb_to_intensity=False)
+        rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(color_image_o3d, depth_image_o3d, depth_scale=1000.0, depth_trunc=1000.0, convert_rgb_to_intensity=False)
         pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd, pinhole_camera_intrinsic)
     else:
-        pcd = o3d.geometry.PointCloud.create_from_depth_image(o3d.geometry.Image(depth_image), pinhole_camera_intrinsic)
-    
+        #option1
+        pcd = o3d.geometry.PointCloud.create_from_depth_image(depth_image_o3d, pinhole_camera_intrinsic)
+
     #Flip it, otherwise the pointcloud will be upside down
     pcd.transform([[1, 0, 0, 0 ], 
                    [0, -1, 0, 0],
                    [0, 0, -1, 0], 
                    [0, 0, 0, 1 ]])
-    pcd.scale(SCALE, center = (0,0,0))
+    # pcd.scale(SCALE, center = (0,0,0))
 
     # [pcd_cropped, cropArea, rotationMatrix] = selectAndRotate(pcd, True)
     # mean_color = reduce(lambda a, b: a + b, np.asarray(pcd_cropped.colors) / len(np.asarray(pcd_cropped.colors)))
@@ -119,18 +120,9 @@ if __name__ == '__main__':
     if found_rgb:
         filterd_colors_ind = []
         for inx, rgb in enumerate(np.asarray(pcd.colors)):
-            if rgb[0] < 0.3 and rgb[1] > 0.3 and rgb[2] < 0.5:
+            if rgb[0] > 0.5 and rgb[1] < 0.4 and rgb[2] < 0.4:
                 filterd_colors_ind.append(inx)
-                # print(rgb)
-            r.append(rgb[0])
-            g.append(rgb[1])
-            b.append(rgb[2])
-        
-        plt.subplot(1, 1, 1)
-        plt.hist(r, color = 'red')
-        plt.hist(g, color = 'green')
-        plt.hist(b, color = 'blue')
-        plt.show()
+        #         print(rgb)
 
         # print(filterd_colors_ind)
         points = getPointCoords(filterd_colors_ind, pcd)
@@ -170,9 +162,12 @@ if __name__ == '__main__':
                 distance = np.linalg.norm(np.asarray(centers[0]) - np.asarray(centers[1]))
                 print(f'\nDistance: {distance}m')
             else:
-                print(f'\nNo of centers: {len(centers)}')
+                print(f'\nWanted 2 centers but got {len(centers)}')
 
             for center in centers:
+                # print(center)
+                # TODO: najdi točko najbližjo centru v PCD-ju glej kako se razdalja med centroma spreminja preko indexa teh dveh točk po raznih operacijah
+                # TODO: če to ne dela piši na njihov blog da ti povejo zakaj se razdalja ne ohrani v našem primeru
                 found_points_box = createBox(width = 0.1 * SCALE, height = 0.1 * SCALE, depth = 0.1 * SCALE)
                 found_points_box.translate(center)
                 box_array.append(found_points_box)

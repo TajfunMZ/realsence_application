@@ -29,14 +29,14 @@ def rotateImage(pcd, pointIndex, automaticAlignment):
 def save2json(save_dict, name):
     json_object = json.dumps(save_dict, indent=4)
     
-    with open("configuration_files/" + name + ".json", "w") as outfile:
+    with open("./configuration_files/" + name + ".json", "w") as outfile:
         outfile.write(json_object)
 
 
 # Load calibration data
 def loadCalibration(calibrationFileName):
     # Opening and reading JSON file
-    with open(calibrationFileName + '.json', 'r') as openfile:
+    with open('./configuration_files/' + calibrationFileName + '.json', 'r') as openfile:
         json_object = json.load(openfile)
 
     return json_object
