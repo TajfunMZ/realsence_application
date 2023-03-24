@@ -39,7 +39,8 @@ I am using the tools listed below, but so long as the dependencies above are ful
   - Add external libraries to the environment by running the following commands:
     - pip install open3d
     - pip install pyrealsense2
-  - Add necessary files in your working drectory. File names:
+  
+  - Add necessary files in your working drectory if necessary. File names:
     - configuration_files (saves and loads config data)
     - csv_results (saves measured data on normal measure run)
     - xls_results (saves measured data on xls measurment or on optimisation)

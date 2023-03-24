@@ -2,8 +2,3 @@
 ####################
 __pycache__/
 *.ipynb
-assets/
-configuration_files/
-csv_results/
-evaluated_results/
-xls_results/
