@@ -120,7 +120,7 @@ if __name__ == '__main__':
     if found_rgb:
         filterd_colors_ind = []
         for inx, rgb in enumerate(np.asarray(pcd.colors)):
-            if rgb[0] > 0.5 and rgb[1] < 0.4 and rgb[2] < 0.4:
+            if rgb[0] < 0.5 and rgb[1] > 0.3 and rgb[2] < 0.4:
                 filterd_colors_ind.append(inx)
                 # print(rgb)
 
@@ -130,7 +130,7 @@ if __name__ == '__main__':
         # Create pcd and cluster points
         pcd_filterd = o3d.geometry.PointCloud()
         pcd_filterd.points = o3d.utility.Vector3dVector(points)
-        point_class_vector = pcd_filterd.cluster_dbscan(0.1 * SCALE, 4, False)
+        point_class_vector = pcd_filterd.cluster_dbscan(0.1 * SCALE, 80, False)
 
         clusters = []
         box_array = []
