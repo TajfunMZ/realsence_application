@@ -57,7 +57,7 @@ def findOptimalParameters(pipe, iterr, real_distance1 = 0.5, real_distance2 = 0.
         print(f'\nScale factor: {x}')
         sucessful_takes = 0
         ## get points and distances
-        for i in range(10):# while sucessful_takes < NO_OF_TAKES:
+        while sucessful_takes < NO_OF_TAKES: # for i in range(10): # 
             pcd = getPCD(pipe, True)
             pcd.scale(x, center=(0, 0, 0))
 
@@ -65,7 +65,7 @@ def findOptimalParameters(pipe, iterr, real_distance1 = 0.5, real_distance2 = 0.
             filterd_colors_ind = []
             # print('RED')
             for inx, rgb in enumerate(np.asarray(pcd.colors)):
-                if rgb[0] > 0.3 and rgb[1] < 0.3 and rgb[2] < 0.4:
+                if rgb[0] > 0.4 and rgb[1] < 0.4 and rgb[2] < 0.4:
                     filterd_colors_ind.append(inx)
                     # print(rgb)
 
@@ -78,7 +78,7 @@ def findOptimalParameters(pipe, iterr, real_distance1 = 0.5, real_distance2 = 0.
             filterd_colors_ind = []
             # print('GREEN')
             for inx, rgb in enumerate(np.asarray(pcd.colors)):
-                if rgb[0] < 0.3 and rgb[1] > 0.3 and rgb[2] < 0.5:
+                if rgb[0] < 0.5 and rgb[1] > 0.3 and rgb[2] < 0.5:
                     filterd_colors_ind.append(inx)
                     # print(rgb)
 
@@ -93,16 +93,15 @@ def findOptimalParameters(pipe, iterr, real_distance1 = 0.5, real_distance2 = 0.
             
             sucessful_takes += 1
 
+        # if x == iterr[0]:
+        #     box_array = []
+        #     box_size = 0.1 * x
+        #     for center in (centers1 + centers2):
+        #         found_points_box = createBox(width = box_size, height = box_size, depth = box_size)
+        #         found_points_box.translate(center)
+        #         box_array.append(found_points_box)
 
-        if x == iterr[0]:
-            box_array = []
-            box_size = 0.1 * x
-            for center in (centers1 + centers2):
-                found_points_box = createBox(width = box_size, height = box_size, depth = box_size)
-                found_points_box.translate(center)
-                box_array.append(found_points_box)
-
-            plotGeometriesWithOriginVectors([pcd] + box_array)
+        #     plotGeometriesWithOriginVectors([pcd] + box_array)
         
         avrg_d_1 = average(run_distances1)
         avrg_d_2 = average(run_distances2)

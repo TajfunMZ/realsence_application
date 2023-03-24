@@ -61,7 +61,7 @@ if __name__ == '__main__':
     
     depth_sensor = profile.get_device().first_depth_sensor()
     depth_sensor.set_option(rs.option.enable_auto_exposure, 1); # Enable auto exposure
-    depth_sensor.set_option(rs.option.depth_units, 0.0001) # Set depth units from 1mm to 0.1mm. This decreases camera range but increases depth accuracy
+    depth_sensor.set_option(rs.option.depth_units, 0.001) # Set depth units from 1mm to 1mm. This decreases camera range but increases depth accuracy
     depth_table = advncd_mode_cfg.get_depth_table()
     depth_table.depthClampMax = 65535   # Set max range to max possible value at current depth units (16 bit)
     advncd_mode_cfg.set_depth_table(depth_table)
@@ -122,7 +122,7 @@ if __name__ == '__main__':
         for inx, rgb in enumerate(np.asarray(pcd.colors)):
             if rgb[0] > 0.5 and rgb[1] < 0.4 and rgb[2] < 0.4:
                 filterd_colors_ind.append(inx)
-        #         print(rgb)
+                # print(rgb)
 
         # print(filterd_colors_ind)
         points = getPointCoords(filterd_colors_ind, pcd)
@@ -160,7 +160,7 @@ if __name__ == '__main__':
             
             if len(centers) == 2:
                 distance = np.linalg.norm(np.asarray(centers[0]) - np.asarray(centers[1]))
-                print(f'\nDistance: {distance}m')
+                print(f'\nDistance: {distance} m')
             else:
                 print(f'\nWanted 2 centers but got {len(centers)}')
 
@@ -168,7 +168,7 @@ if __name__ == '__main__':
                 # print(center)
                 # TODO: najdi točko najbližjo centru v PCD-ju glej kako se razdalja med centroma spreminja preko indexa teh dveh točk po raznih operacijah
                 # TODO: če to ne dela piši na njihov blog da ti povejo zakaj se razdalja ne ohrani v našem primeru
-                found_points_box = createBox(width = 0.1 * SCALE, height = 0.1 * SCALE, depth = 0.1 * SCALE)
+                found_points_box = createBox(width = 0.01 * SCALE, height = 0.01 * SCALE, depth = 0.01 * SCALE)
                 found_points_box.translate(center)
                 box_array.append(found_points_box)
 

@@ -48,7 +48,7 @@ def initCamera(capture_rgb = True):
 
     depth_sensor = profile.get_device().first_depth_sensor()
     depth_sensor.set_option(rs.option.enable_auto_exposure, 1); # Enable auto exposure
-    depth_sensor.set_option(rs.option.depth_units, 0.0001) # Set depth units from 1mm to 0.2mm. This decreases camera range but increases depth accuracy
+    depth_sensor.set_option(rs.option.depth_units, 0.001) # Set depth units from 1mm to 1mm. This decreases camera range but increases depth accuracy
     depth_table = advncd_mode_cfg.get_depth_table()
     depth_table.depthClampMax = 65535   # Set max range to max possible value at current depth units (16 bit)
     advncd_mode_cfg.set_depth_table(depth_table)
