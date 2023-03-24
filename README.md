@@ -61,6 +61,7 @@ Unles specified otherwise, please keep your dependencies up to date.
 .../main.py {programe mode} {file name} {other options seperated by space}
 
 **Examples:**
+
 .../main.py calibrate my_file_name  **or**  .../main.py calibrate my_file_name False False
   
   The first Bool defines if you want to also capture an rgb image for any color recognition.
