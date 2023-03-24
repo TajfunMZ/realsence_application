@@ -70,7 +70,7 @@ if __name__ == '__main__':
                 low = 0
                 high = 20
 
-                for decimal_place in range(4):
+                for decimal_place in range(3):
                     milis_since_epoch = round(time.time()*1000)
                     data = []
                     
@@ -109,9 +109,9 @@ if __name__ == '__main__':
                         if min2 == i[4]:
                             ind2 = i[0]
 
-                    low = (ind1/decimal_factor - 1)*10 if ind1 < ind2 else (ind2/decimal_factor - 1)*10
+                    low = round(ind1/decimal_factor - 1, 2)*10 if ind1 < ind2 else round(ind2/decimal_factor - 1, 2)*10
                     low = low if low > 0 else 0
-                    high = (ind1/decimal_factor + 1)*10 if ind1 > ind2 else (ind2/decimal_factor + 1)*10
+                    high = round(ind1/decimal_factor + 1, 2)*10 if ind1 > ind2 else round(ind2/decimal_factor + 1, 2)*10
                     decimal_factor = round(decimal_factor * 0.1, 6)
 
                     print(f'\nLow: {low}  High: {high}  Step: {decimal_factor}\n')

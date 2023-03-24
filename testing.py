@@ -165,9 +165,6 @@ if __name__ == '__main__':
                 print(f'\nWanted 2 centers but got {len(centers)}')
 
             for center in centers:
-                # print(center)
-                # TODO: najdi točko najbližjo centru v PCD-ju glej kako se razdalja med centroma spreminja preko indexa teh dveh točk po raznih operacijah
-                # TODO: če to ne dela piši na njihov blog da ti povejo zakaj se razdalja ne ohrani v našem primeru
                 found_points_box = createBox(width = 0.01 * SCALE, height = 0.01 * SCALE, depth = 0.01 * SCALE)
                 found_points_box.translate(center)
                 box_array.append(found_points_box)
