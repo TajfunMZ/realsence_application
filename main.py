@@ -261,8 +261,8 @@ if __name__ == '__main__':
         pipe.stop()
     else:
         print('Please enter the name of the function that you want to run')
-        print('Syntax: .../main.py calibrate file_name zero_volume(If you want to set the volume of an empty object yourself) bool(auto detect color targets) bool(save pcd)\n    Or')
-        print('Syntax: .../main.py measure file_name number_of_iterrations save_file_name_extencion(If you want more measurments with the same configuration file and a more recognisable name)')
+        print('Syntax: .../main.py calibrate my_file_name  **or**  .../main.py calibrate my_file_name False False')
+        print('Syntax: .../main.py measure my_save_and_config_name  **or**  .../main.py measure my_save_and_config_name 50 my_save_file_extencion')
         print('\nNote: Only the action and file name are necesary')
 
     
