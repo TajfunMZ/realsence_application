@@ -61,10 +61,13 @@ Unles specified otherwise, please keep your dependencies up to date.
 .../main.py {programe mode} {file name} {other options seperated by space}
 
 **Examples:**
+
 .../main.py calibrate my_file_name  **or**  .../main.py calibrate my_file_name False False
+  
   The first Bool defines if you want to also capture an rgb image for any color recognition.
   The second Bool defines if you whish to save the pointcloud to the assets folder
 
 .../main.py measure my_save_and_config_name  **or**  .../main.py measure my_save_and_config_name 10 my_save_file_extencion
+  
   The first Integer defines the number of measurments you whish to take (increase this for higher accuracy)
   The second String defines the extencion that will appear in the name of the saved excel. Keep in mind that the name length has a limit
