@@ -4,9 +4,6 @@ import numpy as np
 import pyrealsense2 as rs
 import copy
 
-DOWN_FACTOR = -1    # Value changed -> 0.06   # Defines the number of points that are used for volume calculation. if downsample_factor <= 0 : action is skipped
-SCALE_FACTOR = 1    # 0.225
-
 # Initialize D435 depth camera, capture only depth data, not RGB
 def initCamera(capture_rgb = True):
     pipe = rs.pipeline()
@@ -61,7 +58,7 @@ def initCamera(capture_rgb = True):
 
 
 # Capture a pointcloud using a connected D435 camera (camera has to be initialized beforehand)
-def capture_pcd(pipe, down_sample_size, mode):
+def capture_pcd(pipe, mode):
     if mode:
         align = rs.align(rs.stream.color)
     
@@ -110,27 +107,12 @@ def capture_pcd(pipe, down_sample_size, mode):
                     [0, 0, -1, 0],
                     [0, 0, 0, 1]])
 
-    # Downsample the pointcloud
-    if(down_sample_size > 0):
-        pcd = downSample(pcd, down_sample_size, False)
-    
     return pcd
-
-
-# Downsample and recalculate normals
-def downSample(pcd, down_sample_size, recalculate_normals = False):
-    downpcd = pcd.voxel_down_sample(voxel_size = down_sample_size)
-    if(recalculate_normals):
-        downpcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(
-            radius=0.1, max_nn=30))
-    
-    return downpcd
 
 
 # get 3d image
 def getPCD(pipe, mode = False):     # The camera initially has offset and the transformation to meters is not 1:1. Previous scale = 0.225
-    pcd = capture_pcd(pipe, DOWN_FACTOR, mode)   # second parameter is downgrade koeficient in meters
-    pcd.scale(SCALE_FACTOR, center=(0, 0, 0))
+    pcd = capture_pcd(pipe, mode)   # second parameter is downgrade koeficient in meters
     return pcd
 
 
@@ -140,7 +122,7 @@ def getMarkerPoints(pcd):
     # Find colour
     filterd_colors_ind = []
     for inx, rgb in enumerate(np.asarray(pcd.colors)):
-        if rgb[0] < 0.5 and rgb[1] > 0.3 and rgb[2] < 0.1:
+        if rgb[0] < 0.5 and rgb[1] > 0.3 and rgb[2] < 0.4:  # green
             filterd_colors_ind.append(inx)
 
     points = getPointCoords(filterd_colors_ind, pcd)
@@ -148,7 +130,7 @@ def getMarkerPoints(pcd):
     # Create pcd and cluster points
     pcd_filterd = o3d.geometry.PointCloud()
     pcd_filterd.points = o3d.utility.Vector3dVector(points)
-    point_class_vector = pcd_filterd.cluster_dbscan(0.3 * SCALE_FACTOR, 50, True)
+    point_class_vector = pcd_filterd.cluster_dbscan(0.2, 50, False)
 
     return [point_class_vector, pcd_filterd]
 

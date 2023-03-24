@@ -87,14 +87,14 @@ def selectAndRotate(pcd_o, automaticAlignment, point_class_vector = [], targets_
                 print('Could not detect 4 different markers, please choose points manualy.')
                 continue
 
-            box_array = []
-            for center in points:
-                found_points_box = createBox(width = 0.1, height = 0.1, depth = 0.1)
-                found_points_box.translate(center)
-                box_array.append(found_points_box)
+            # box_array = []
+            # for center in points:
+            #     found_points_box = createBox(width = 0.01, height = 0.01, depth = 0.01)
+            #     found_points_box.translate(center)
+            #     box_array.append(found_points_box)
 
-            targets_pcd.paint_uniform_color([1,1,1])
-            plotGeometriesWithOriginVectors([pcd, targets_pcd] + box_array)
+            # targets_pcd.paint_uniform_color([1,1,1])
+            # plotGeometriesWithOriginVectors([pcd, targets_pcd] + box_array)
         else:
             # get new coordinates of points
             points = getPointCoords(pointIndex, pcd)
