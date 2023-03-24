@@ -39,6 +39,12 @@ I am using the tools listed below, but so long as the dependencies above are ful
   - Add external libraries to the environment by running the following commands:
     - pip install open3d
     - pip install pyrealsense2
+  
+  - Add necessary files in your working drectory if necessary. File names:
+    - configuration_files (saves and loads config data)
+    - csv_results (saves measured data on normal measure run)
+    - xls_results (saves measured data on xls measurment or on optimisation)
+    - assets (saves and loads the pointclouds as .ply files)
 
 You can check the included librares and its versions by running *conda list* in your terminal.
 Unles specified otherwise, please keep your dependencies up to date.
@@ -55,5 +61,10 @@ Unles specified otherwise, please keep your dependencies up to date.
 .../main.py {programe mode} {file name} {other options seperated by space}
 
 **Examples:**
-.../main.py calibrate file_name float(zero volume, if you want to set the volume of an empty object yourself) bool(auto detect color targets) bool(save pcd)
-.../main.py measure file_name number_of_iterrations save_file_name_extencion(If you want more measurments with the same configuration file and a more recognisable name)
+.../main.py calibrate my_file_name  **or**  .../main.py calibrate my_file_name False False
+  The first Bool defines if you want to also capture an rgb image for any color recognition.
+  The second Bool defines if you whish to save the pointcloud to the assets folder
+
+.../main.py measure my_save_and_config_name  **or**  .../main.py measure my_save_and_config_name 10 my_save_file_extencion
+  The first Integer defines the number of measurments you whish to take (increase this for higher accuracy)
+  The second String defines the extencion that will appear in the name of the saved excel. Keep in mind that the name length has a limit

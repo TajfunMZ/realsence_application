@@ -37,23 +37,22 @@ if __name__ == '__main__':
                     no_iterrations = int(sys.argv[3]) if no_arguments >= 4 else 10
                     name_extention = sys.argv[4] if no_arguments >=5 else ''
 
-                    full_path = "/configuration_files/" + file_name
-                    if(os.path.isfile(full_path + '.json')):
+                    if(os.path.isfile('./configuration_files/' + file_name + '.json')):
                         # Load point coordinates and pcd rotation matrix
-                        calibration_json = loadCalibration(full_path)
+                        calibration_json = loadCalibration(file_name)
                     else:
                         # If no file is present calibrate and load
                         print('Calibration file not found. Calibrating...')
-                        captureReference(file_name, pipe, -1, True, True, 10, False)
+                        captureReference(file_name, pipe, -1, True, False, 10, False)
                         input('\nEnter anything to continuing collecting measurments.')
 
                         # Load point coordinates and pcd rotation matrix
-                        calibration_json = loadCalibration(full_path)
+                        calibration_json = loadCalibration(file_name)
                     
                     milis_since_epoch = round(time.time()*1000)
                     save_file = file_name + '_' + name_extention + '_' + str(milis_since_epoch) + '.csv'
                     # Open results csv and add time in miliseconds to not overwrite existing results
-                    with open("/csv_results/" + save_file, 'w', newline='') as file:
+                    with open("./csv_results/" + save_file, 'w', newline='') as file:
                         writer = csv.writer(file)
                         writer.writerow(["Iterration number", "Volume [m^3]", "Volume difference [m^3]", "Time"])
 
@@ -67,21 +66,25 @@ if __name__ == '__main__':
                     print('Please also provide the name of the configuration and result save file without the ".json" or ".csv" sufix. After that you can also define the number of iterrations')
             
             elif(mode == 'optimise2'):
-                for i in range(10):
+                decimal_factor = 0.1
+                low = 0
+                high = 20
+
+                for decimal_place in range(4):
                     milis_since_epoch = round(time.time()*1000)
                     data = []
                     
                     # Create an Excel and add formating.
-                    book = xlsxwriter.Workbook('xls_results/calibrate_scale_by_distance_' + str(milis_since_epoch) + '.xlsx')
+                    book = xlsxwriter.Workbook('xls_results/calibrate_scale_' + str(decimal_place) + '_' + str(milis_since_epoch) + '.xlsx')
                     bold = book.add_format({'bold': 1})
                     sheet = book.add_worksheet('distance errors')
                     
                     # define first line
                     fields = ['scale factor', 'average distance x-axis', 'Distance error x-axis', 'average distance y-axis', 'Distance error y-axis']
-                    for i, field in enumerate(fields):
-                        sheet.write(0, i, field, bold)
+                    for n, field in enumerate(fields):
+                        sheet.write(0, n, field, bold)
 
-                    iterr = [round(0.001 + x * 0.001, 4) for x in range(0, 5000)] #[round(0.700 + x * 0.0001, 4) for x in range(0, 301)] # from 0.7 to 0.73 by 0.0001
+                    iterr = [round(decimal_factor + x * decimal_factor, 5) for x in range(int(low), int(high))]
                     data = findOptimalParameters(pipe, iterr)
                         
                     # iterating through the content list
@@ -93,7 +96,26 @@ if __name__ == '__main__':
                         sheet.write_number(row+1, 4, fields[4])
 
                     book.close()
-                    print(f'All measurments finished for case {i}. It took {(round(time.time()*1000) - milis_since_epoch)/1000} seconds')
+
+                    # Find minimums and adjust the next step
+                    min1 = min(list(map(lambda a: a[2], data)))
+                    min2 = min(list(map(lambda a: a[4], data)))
+
+                    ind1 = 0
+                    ind2 = 0
+                    for i in data:
+                        if min1 == i[2]:
+                            ind1 = i[0]
+                        if min2 == i[4]:
+                            ind2 = i[0]
+
+                    low = (ind1/decimal_factor - 1)*10 if ind1 < ind2 else (ind2/decimal_factor - 1)*10
+                    low = low if low > 0 else 0
+                    high = (ind1/decimal_factor + 1)*10 if ind1 > ind2 else (ind2/decimal_factor + 1)*10
+                    decimal_factor = round(decimal_factor * 0.1, 6)
+
+                    print(f'\nLow: {low}  High: {high}  Step: {decimal_factor}\n')
+                    print(f'For {decimal_place} decimal place found minimum at index: {ind1} with value of: {min1} and at index: {ind2} with value of: {min2}')
 
 
             elif(mode == 'optimise'):
@@ -239,8 +261,8 @@ if __name__ == '__main__':
         pipe.stop()
     else:
         print('Please enter the name of the function that you want to run')
-        print('Syntax: .../main.py calibrate file_name zero_volume(If you want to set the volume of an empty object yourself) bool(auto detect color targets) bool(save pcd)\n    Or')
-        print('Syntax: .../main.py measure file_name number_of_iterrations save_file_name_extencion(If you want more measurments with the same configuration file and a more recognisable name)')
+        print('Syntax: .../main.py calibrate my_file_name  **or**  .../main.py calibrate my_file_name False False')
+        print('Syntax: .../main.py measure my_save_and_config_name  **or**  .../main.py measure my_save_and_config_name 50 my_save_file_extencion')
         print('\nNote: Only the action and file name are necesary')
 
     

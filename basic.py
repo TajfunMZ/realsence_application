@@ -29,21 +29,21 @@ def rotateImage(pcd, pointIndex, automaticAlignment):
 def save2json(save_dict, name):
     json_object = json.dumps(save_dict, indent=4)
     
-    with open("configuration_files/" + name + ".json", "w") as outfile:
+    with open("./configuration_files/" + name + ".json", "w") as outfile:
         outfile.write(json_object)
 
 
 # Load calibration data
 def loadCalibration(calibrationFileName):
     # Opening and reading JSON file
-    with open(calibrationFileName + '.json', 'r') as openfile:
+    with open('./configuration_files/' + calibrationFileName + '.json', 'r') as openfile:
         json_object = json.load(openfile)
 
     return json_object
 
 
 # select points and rotate the pointcloud
-def selectAndRotate(pcd_o, automaticAlignment, point_class_vector, targets_pcd = 0):
+def selectAndRotate(pcd_o, automaticAlignment, point_class_vector = [], targets_pcd = 0):
     auto_select = False if targets_pcd == 0 else True
     # Select points to define crop area and floor plane angle
     if not auto_select:
