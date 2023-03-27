@@ -43,7 +43,7 @@ if __name__ == '__main__':
                     else:
                         # If no file is present calibrate and load
                         print('Calibration file not found. Calibrating...')
-                        captureReference(file_name, pipe, -1, True, False, 10, False)
+                        captureReference(file_name, pipe, -1, True, True, 10, False)
                         input('\nEnter anything to continuing collecting measurments.')
 
                         # Load point coordinates and pcd rotation matrix
@@ -192,18 +192,17 @@ if __name__ == '__main__':
                 list_names = sys.argv[4] if no_arguments >=5 else ''
 
                 # Start  with measurments or configuration
-                full_path = "/configuration_files/" + file_name
-                if(os.path.isfile(full_path + '.json')):
+                if(os.path.isfile('./configuration_files/' + file_name + '.json')):
                     # Load point coordinates and pcd rotation matrix
-                    calibration_json = loadCalibration(full_path)
+                    calibration_json = loadCalibration(file_name)
                 else:
                     # If no file is present calibrate and load
                     print('Calibration file not found. Calibrating...')
-                    captureReference(file_name, pipe, -1, True, True)
+                    captureReference(file_name, pipe, -1, True, True, 10, False)
                     input('\nEnter anything to continuing collecting measurments.')
 
                     # Load point coordinates and pcd rotation matrix
-                    calibration_json = loadCalibration(full_path)
+                    calibration_json = loadCalibration(file_name)
 
                 milis_since_epoch = round(time.time()*1000)
                 save_file = file_name + '_' + str(milis_since_epoch)

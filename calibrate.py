@@ -21,6 +21,11 @@ def captureReference(calibrationFileName, pipe, zero_volume, automaticAlignment,
         pcd, cropArea, rotationMatrix = selectAndRotate(pcd, automaticAlignment, [])
     else:
         [point_class_vector, targets_pcd] = getMarkerPoints(pcd)
+        if max(point_class_vector) != 3:
+            print(max(point_class_vector))
+            print('\n4 colored markers not found, please select edge points manualy.')
+            point_class_vector = []
+            targets_pcd = 0
         pcd, cropArea, rotationMatrix = selectAndRotate(pcd, automaticAlignment, point_class_vector, targets_pcd)
     
     save_cropArea = copy.deepcopy(cropArea)
