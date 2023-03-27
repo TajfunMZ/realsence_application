@@ -39,7 +39,7 @@ if __name__ == '__main__':
                     else:
                         # If no file is present calibrate and load
                         print('Calibration file not found. Calibrating...')
-                        captureReference(file_name, pipe, -1, True, False, 10, False)
+                        captureReference(file_name, pipe, -1, True, True, 10, False)
                         input('\nEnter anything to continuing collecting measurments.')
 
                         # Load point coordinates and pcd rotation matrix
@@ -74,7 +74,7 @@ if __name__ == '__main__':
                 else:
                     # If no file is present calibrate and load
                     print('Calibration file not found. Calibrating...')
-                    captureReference(file_name, pipe, -1, True, False, 10, False)
+                    captureReference(file_name, pipe, -1, True, True, 10, False)
                     input('\nEnter anything to continuing collecting measurments.')
 
                     # Load point coordinates and pcd rotation matrix

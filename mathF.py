@@ -151,7 +151,7 @@ def preformVolumeCalculations(pcd, empty_container_volume = 0, measurment = -1):
         floor_height = pcd.get_max_bound()[1] - pcd.get_min_bound()[1]
 
         # define the floor under the object
-        origin_box = createBox(width = 0.1, height = 0.1, depth = 0.1)
+        origin_box = createBox(width = 0.01, height = 0.01, depth = 0.01)
         floor_plane = createBox(width = floor_width*2, height = floor_height*2, depth = 0.01)
         floor_plane.translate((-floor_width, -floor_height, -floor_height_offset))
         floor_plane.paint_uniform_color([0.83, 0.83, 0.83])
