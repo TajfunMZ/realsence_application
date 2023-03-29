@@ -144,20 +144,18 @@ def average(number_array):
 # crop image, create a triangulation and calculate volume
 def preformVolumeCalculations(pcd, empty_container_volume = 0, measurment = -1):
     if(measurment <= 0):
-        
+
         # get the location of the cropped item and create a floor
         floor_width = pcd.get_max_bound()[0] - pcd.get_min_bound()[0]
         floor_height = pcd.get_max_bound()[1] - pcd.get_min_bound()[1]
-        floor_center_x = (pcd.get_max_bound()[0] + pcd.get_min_bound()[0])/2
-        floor_center_y = (pcd.get_max_bound()[1] + pcd.get_min_bound()[1])/2
+        floor_center = pcd.get_center()
 
         # define the floor under the object
-        origin_box = createBox(width = 0.01, height = 0.01, depth = 0.01)
         floor_plane = createBox(width = floor_width*2, height = floor_height*2, depth = 0.01)
-        floor_plane.translate((-floor_center_x, -floor_center_y, 0))
+        floor_plane.translate((floor_center[0]-floor_width, floor_center[1]-floor_height, 0))
         floor_plane.paint_uniform_color([0.83, 0.83, 0.83])
 
-        plotGeometriesWithOriginVectors([pcd, floor_plane, origin_box])
+        plotGeometriesWithOriginVectors([pcd, floor_plane])
 
     ## Start calculating volume
     #  calculate triangulation positions and define it in open3d
