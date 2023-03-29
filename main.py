@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
                     # Load data from files
                     pcd_o = loadPCD(file)
-                    calibration_json = loadCalibration("/configuration_files/" + file.split('.')[0])
+                    calibration_json = loadCalibration(file.split('.')[0])
                     
                     rotation_matrix = np.array(calibration_json['rotation'])
                     cropArea = np.array(calibration_json['crop area'])

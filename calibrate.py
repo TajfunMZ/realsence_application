@@ -3,7 +3,8 @@ from cameraF import createBoundingBox, removeOutliers, savePCD, getPCD, getMarke
 from mathF import preformVolumeCalculations, average
 from basic import selectAndRotate, save2json
 
-OUTLIER_NEIGBOURS = 40
+OUTLIER_NEIGBOURS = 50
+STD_RATIO = 5
 
 # Capture the empty container and save selected point coordinates to calibrate for furure use
 def captureReference(calibrationFileName, pipe, zero_volume, automaticAlignment, get_rgb, no_of_ref_measurments = 10, save_pcd = False):
@@ -31,7 +32,7 @@ def captureReference(calibrationFileName, pipe, zero_volume, automaticAlignment,
     # remove sorroundings and outliers to get the height of the pcd
     cropBox = createBoundingBox(cropArea)
     pcd = pcd.crop(cropBox)
-    pcd = removeOutliers(pcd, OUTLIER_NEIGBOURS)
+    pcd = removeOutliers(pcd, OUTLIER_NEIGBOURS, STD_RATIO)
     
     # This moves the entire PCD above the 0 on the 'z' axis.
     lift_pcd = math.ceil(pcd.get_max_bound()[2] - 2*pcd.get_min_bound()[2])
@@ -45,7 +46,7 @@ def captureReference(calibrationFileName, pipe, zero_volume, automaticAlignment,
             cropBox = createBoundingBox(cropArea)
             pcd = pcd.crop(cropBox)
 
-            pcd = removeOutliers(pcd, OUTLIER_NEIGBOURS)
+            pcd = removeOutliers(pcd, OUTLIER_NEIGBOURS, STD_RATIO)
 
             # move above the camera floor, from which we calculate the volume
             pcd.translate((0, 0, lift_pcd))
