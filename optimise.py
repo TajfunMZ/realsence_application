@@ -48,12 +48,12 @@ def getCenters(filterd_colors_ind, pcd, x, points_no = 10):
 
 
 # Change this at need. It is to optimise the hardcoded parameters used in code
-def findOptimalParameters(pipe, iterr, real_distance1 = 0.5, real_distance2 = 0.5):
+def findOptimalParameters(pipe, iterr, real_distance1 = 1, real_distance2 = 1):
     run_distances1 = []
     run_distances2 = []
     result = []
     
-    for calibrate in range(50):
+    for calibrate in range(10):
         getPCD(pipe, True)
 
     for x in iterr:
@@ -61,9 +61,9 @@ def findOptimalParameters(pipe, iterr, real_distance1 = 0.5, real_distance2 = 0.
         sucessful_takes = 0
 
         ## get points and distances
-        while sucessful_takes < NO_OF_TAKES: # for i in range(10): # 
+        for i in range(10): # while sucessful_takes < NO_OF_TAKES: # 
             pcd = getPCD(pipe, True)
-            pcd.scale(x, center=(0, 0, 0))
+            # pcd.scale(x, center=(0, 0, 0))
 
             # Find 'red ish' colour
             filterd_colors_ind = []
@@ -97,15 +97,15 @@ def findOptimalParameters(pipe, iterr, real_distance1 = 0.5, real_distance2 = 0.
             
             sucessful_takes += 1
 
-        # if x == iterr[0]:
-        #     box_array = []
-        #     box_size = 0.01 * x
-        #     for center in (centers1 + centers2):
-        #         found_points_box = createBox(width = box_size, height = box_size, depth = box_size)
-        #         found_points_box.translate(center)
-        #         box_array.append(found_points_box)
+        if x == iterr[0]:
+            box_array = []
+            box_size = 0.01 * x
+            for center in (centers1 + centers2):
+                found_points_box = createBox(width = box_size, height = box_size, depth = box_size)
+                found_points_box.translate(center)
+                box_array.append(found_points_box)
 
-        #     plotGeometriesWithOriginVectors([pcd] + box_array)
+            plotGeometriesWithOriginVectors([pcd] + box_array)
         
         avrg_d_1 = average(run_distances1)
         avrg_d_2 = average(run_distances2)

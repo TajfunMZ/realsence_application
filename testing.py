@@ -6,7 +6,7 @@ from basic import selectAndRotate
 from functools import reduce
 import matplotlib.pyplot as plt
 
-SCALE = 1
+SCALE = 1.2
 
 if __name__ == '__main__':
     # init pipeline, pointcloud and configure camera settings
@@ -106,7 +106,10 @@ if __name__ == '__main__':
                    [0, -1, 0, 0],
                    [0, 0, -1, 0], 
                    [0, 0, 0, 1 ]])
-    # pcd.scale(SCALE, center = (0,0,0))
+    pcd.scale(SCALE, center = (0,0,0))
+
+    # Save modified pcd
+    o3d.io.write_point_cloud('./assets/pcd_20.ply', pcd, write_ascii=False, compressed=False, print_progress=False)
 
     # [pcd_cropped, cropArea, rotationMatrix] = selectAndRotate(pcd, True)
     # mean_color = reduce(lambda a, b: a + b, np.asarray(pcd_cropped.colors) / len(np.asarray(pcd_cropped.colors)))

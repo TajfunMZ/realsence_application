@@ -1,87 +1,70 @@
-import pyrealsense2 as rs
-import numpy as np
+import open3d as o3d
+from cameraF import plotGeometriesWithOriginVectors, createBox, createBoundingBox, removeOutliers
+from basic import selectAndRotate
+from mathF import preformVolumeCalculations
+import copy, math
 
 
-def get_aligned_images():
-    frames = pipeline.wait_for_frames()     
-  
-    #Apply filters
-    pc_filtered = decimation.process(frames)
-    pc_filtered = depth_to_disparity.process(pc_filtered)
-    pc_filtered = spatial.process(pc_filtered)
-    pc_filtered = temporal.process(pc_filtered)
-    pc_filtered = disparity_to_depth.process(pc_filtered).as_frameset()
+def plotWithPlane(pcd_in):
+    pcd = pcd_in[0] if hasattr(pcd_in, "__len__") else pcd_in
+
+    floor_width = pcd.get_max_bound()[0] - pcd.get_min_bound()[0]
+    floor_height = pcd.get_max_bound()[1] - pcd.get_min_bound()[1]
+    floor_center_x = (pcd.get_max_bound()[0] + pcd.get_min_bound()[0])/2
+    floor_center_y = (pcd.get_max_bound()[1] + pcd.get_min_bound()[1])/2
+    floor_plane = createBox(width = floor_width*2, height = floor_height*2, depth = 0.01)
+    floor_plane.translate((-floor_center_x/4, -floor_center_y/4, 0))
+    floor_plane.paint_uniform_color([0.83, 0.83, 0.83])
     
-    #Align the depth frame to color frame
-    aligned_frames = align.process(pc_filtered)      
-    aligned_depth_frame = aligned_frames.get_depth_frame()     
-    aligned_color_frame = aligned_frames.get_color_frame()     
-
-    img_color = np.asanyarray(aligned_color_frame.get_data())       
-    img_depth = np.asanyarray(aligned_depth_frame.get_data())     
-
-    aligned_depth_color_frame = colorizer.colorize(aligned_depth_frame)
-    img_depth_mapped = np.asanyarray(aligned_depth_color_frame.get_data())
-
-    return img_color, img_depth, img_depth_mapped, aligned_color_frame, aligned_depth_frame, aligned_frames
+    plot_pcd = pcd_in if hasattr(pcd_in, "__len__") else [pcd_in]
+    plotGeometriesWithOriginVectors(plot_pcd)
 
 
-def get_3d_camera_coordinate(depth_pixel, aligned_color_frame, aligned_depth_frame, aligned_frames):
-    x = np.round(depth_pixel[1]).astype(np.int64)
-    y = np.round(depth_pixel[0]).astype(np.int64)
+file_empty = 'assetsget_pcd.ply'
+file_full = 'assetsget_pcd_kup.ply'
 
-    #pointcloud
-    pc.map_to(aligned_color_frame)
-    points = pc.calculate(aligned_depth_frame)
-    points.export_to_ply("../frame_test.ply", aligned_color_frame)  
+pcd_empty = o3d.io.read_point_cloud("./assets/" + file_empty, print_progress = True)
+pcd_full = o3d.io.read_point_cloud("./assets/" + file_full, print_progress = True)
 
-    vtx = np.asanyarray(points.get_vertices())
-    #print('vtx_before_reshape: ', vtx.shape)  
-    vtx = np.reshape(vtx, (1080, 1920, -1))
-    #print('vtx_after_reshape: ', vtx.shape) 
-
-    camera_coordinate = vtx[y][x][0]
-    #print ('camera_coordinate: ',camera_coordinate)
-    dis = camera_coordinate[2]
-
-    return dis, camera_coordinate
+# Show the pointclouds before any transformationa
+# pcd_empty.paint_uniform_color([0.9,0.9,0.9])
+# pcd_full.paint_uniform_color([0,0,0])
+# plotWithPlane([pcd_full, pcd_empty])
 
 
-''' camera setting '''
-pipeline = rs.pipeline()
-config = rs.config()
-config.enable_stream(rs.stream.depth, 1280,720, rs.format.z16, 30)
-config.enable_stream(rs.stream.color, 1920,1080, rs.format.bgr8, 30)
+# process the pcd-s
+pcd_full, cropArea, rotationMatrix = selectAndRotate(pcd_full, True, [])
+pcd_empty.rotate(rotationMatrix, center=(0,0,0))
+save_cropArea = copy.deepcopy(cropArea)
+cropBox = createBoundingBox(cropArea)
 
-profile = pipeline.start(config)
+pcd_empty = pcd_empty.crop(cropBox)
+pcd_empty = removeOutliers(pcd_empty, 30, 4.0)
+pcd_full = pcd_full.crop(cropBox)
+pcd_full = removeOutliers(pcd_full, 30, 4.0)
 
-pc = rs.pointcloud()
-points = rs.points()
+# This moves the entire PCD above the 0 on the 'z' axis.
+lift_pcd = math.ceil(pcd_empty.get_max_bound()[2] - 2*pcd_empty.get_min_bound()[2])
+pcd_empty.translate((0, 0, lift_pcd))
+pcd_full.translate((0, 0, lift_pcd))
 
-#Define filters
-#Decimation:
-decimation = rs.decimation_filter()
-#Depth to disparity
-depth_to_disparity = rs.disparity_transform(True)
-disparity_to_depth = rs.disparity_transform(False)
-#Spatial:
-spatial = rs.spatial_filter()
-spatial.set_option(rs.option.holes_fill, 0) # between 0 and 5 def = 0
-spatial.set_option(rs.option.filter_magnitude, 2) # between 1 and 5 def=2
-spatial.set_option(rs.option.filter_smooth_alpha, 0.5) # between 0.25 and 1 def=0.5
-spatial.set_option(rs.option.filter_smooth_delta, 20) # between 1 and 50 def=20
-#Temporal:
-temporal = rs.temporal_filter()
-temporal.set_option(rs.option.filter_smooth_alpha, 0.4)
-temporal.set_option(rs.option.filter_smooth_delta, 20)
+# Show the pointclouds after any transformationa
+pcd_empty.paint_uniform_color([0.9,0.9,0.9])
+pcd_full.paint_uniform_color([0,0,0])
+plotWithPlane([pcd_full, pcd_empty])
 
-colorizer = rs.colorizer()
+volume_empty = preformVolumeCalculations(pcd_empty, 0, 10)
+volume_full = preformVolumeCalculations(pcd_full, 0, 0)
 
-#Get info about depth scaling of the device
-depth_sensor = profile.get_device().first_depth_sensor()
-depth_scale = depth_sensor.get_depth_scale()
-print("Depth Scale is: " , depth_scale)
+print(f'First part finished successfully, with a calculated volume difference of {round(volume_full-volume_empty, 3)}m^3 and an actual one of 0.0976m^3!')
 
-#align to color
-align_to = rs.stream.color
-align = rs.align(align_to)
+
+floor, inliers = pcd_empty.segment_plane(distance_threshold=0.02, ransac_n=3, num_iterations=1000)
+inlier_cloud = pcd_empty.select_by_index(inliers)
+inlier_cloud.paint_uniform_color([1.0, 1.0, 0])
+plotGeometriesWithOriginVectors([inlier_cloud, pcd_empty])
+
+floor, inliers = pcd_full.segment_plane(distance_threshold=0.02, ransac_n=3, num_iterations=1000)
+inlier_cloud = pcd_full.select_by_index(inliers)
+inlier_cloud.paint_uniform_color([1.0, 1.0, 0])
+plotGeometriesWithOriginVectors([inlier_cloud, pcd_full])
