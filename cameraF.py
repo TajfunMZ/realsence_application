@@ -2,9 +2,8 @@
 import open3d as o3d
 import numpy as np
 import pyrealsense2 as rs
-import copy
 
-SCALE = 1.1
+SCALE = 1.12
 
 # Initialize D435 depth camera, capture only depth data, not RGB
 def initCamera(capture_rgb = True):
@@ -62,7 +61,7 @@ def initCamera(capture_rgb = True):
 # Capture a pointcloud using a connected D435 camera (camera has to be initialized beforehand)
 def capture_pcd(pipe, mode):
     if mode:
-        align = rs.align(rs.stream.color)
+        align = rs.align(rs.stream.depth)
     
     # declare filters
     dec_filter = rs.decimation_filter()
@@ -124,7 +123,7 @@ def getMarkerPoints(pcd):
     # Find colour
     filterd_colors_ind = []
     for inx, rgb in enumerate(np.asarray(pcd.colors)):
-        if rgb[0] < 0.5 and rgb[1] > 0.3 and rgb[2] < 0.4:  # green
+        if rgb[0] < 0.5 and rgb[1] > 0.3 and rgb[2] < 0.4:  # Green
             filterd_colors_ind.append(inx)
 
     points = getPointCoords(filterd_colors_ind, pcd)
@@ -178,7 +177,7 @@ def selectAreaWithPoints(pcd):
         if(input('You have not selected 4 points, do you want to quit? Anwser with "y" for yes or "n" for no: ') == 'y'):
             exit('Please try your best to select exactly 4 points next time. I belive in you!!')
         else:
-            exit('Please restart the program to select the correct number of points.')
+            return selectAreaWithPoints(pcd)
     else:        
         return picked_points
 
@@ -218,7 +217,7 @@ def removeOutliers(pcd, outlier_neigbours, _std_ratio = 2.0):
 
 # Save PCD
 def savePCD(pcd, name):
-    o3d.io.write_point_cloud("/realsence_application/assets/" + name + '.ply', pcd, write_ascii=False, compressed=False, print_progress=False)
+    o3d.io.write_point_cloud("./assets/" + name + '.ply', pcd, write_ascii=False, compressed=False, print_progress=False)
 
 
 # define open3d box
@@ -228,4 +227,4 @@ def createBox(width, height, depth):
 
 # open point cloud from file
 def loadPCD(file):
-    return o3d.io.read_point_cloud("/realsence_application/assets/" + file, print_progress = True)
+    return o3d.io.read_point_cloud("./assets/" + file, print_progress = True)

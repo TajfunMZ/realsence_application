@@ -2,10 +2,12 @@ import json, copy
 import numpy as np
 from functools import reduce
 from mathF import preformVolumeCalculations, getRotationMatrix, rectangleFromPoints, createPlaneParametersFromPoints
-from cameraF import getPCD, getPointCoords, selectAreaWithPoints, createBoundingBox, plotGeometriesWithOriginVectors, createBox
+from cameraF import getPCD, getPointCoords, selectAreaWithPoints, createBoundingBox, plotGeometriesWithOriginVectors, removeOutliers
 
 CROP_HEIGHT = 4             # If the cropbox cuts of the pile in the z coordinate, increase this
 CROP_EDGE = 1               # It is the added distance between points devided by crop_edge_factor
+OUTLIER_NEIGBOURS = 40
+STD_RATIO = 5
 
 # get rotated pcd and new rotated points
 def rotateImage(pcd, pointIndex, automaticAlignment):
@@ -139,8 +141,7 @@ def startMeasurment(calibration_json, pipe, measurment):
     pcd = pcd.crop(cropBox)
 
     # Remove noise from cropped PCD
-    cl, ind = pcd.remove_statistical_outlier(nb_neighbors=100,std_ratio=2.0)
-    pcd = pcd.select_by_index(ind)
+    pcd = removeOutliers(pcd, OUTLIER_NEIGBOURS, STD_RATIO)
 
     pcd.translate((0, 0, lift_pcd))
     return [preformVolumeCalculations(pcd, zeroVolume, measurment), zeroVolume]
