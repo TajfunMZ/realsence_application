@@ -4,7 +4,7 @@ import numpy as np
 import pyrealsense2 as rs
 import copy
 
-SCALE = 1.2
+SCALE = 1.1
 
 # Initialize D435 depth camera, capture only depth data, not RGB
 def initCamera(capture_rgb = True):
@@ -113,10 +113,9 @@ def capture_pcd(pipe, mode):
 
 
 # get 3d image
-def getPCD(pipe, mode = False):     # The camera initially has offset and the transformation to meters is not 1:1. Previous scale = 1.2
-    pcd = capture_pcd(pipe, mode)   # second parameter is downgrade koeficient in meters
-    pcd.scale(SCALE, center=(0, 0, 0))
-    return pcd
+def getPCD(pipe, mode = False):     # The camera initially has offset and the transformation to meters is not 1:1!
+    pcd = capture_pcd(pipe, mode)   # second parameter is mode for automatic edge detecrion
+    return pcd.scale(SCALE, center=(0, 0, 0))
 
 
 # filter by color   

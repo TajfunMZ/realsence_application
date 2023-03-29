@@ -39,7 +39,7 @@ if __name__ == '__main__':
                     else:
                         # If no file is present calibrate and load
                         print('Calibration file not found. Calibrating...')
-                        captureReference(file_name, pipe, -1, True, True, 10, False)
+                        captureReference(file_name, pipe, -1, True, True)
                         input('\nEnter anything to continuing collecting measurments.')
 
                         # Load point coordinates and pcd rotation matrix
@@ -74,8 +74,7 @@ if __name__ == '__main__':
                 else:
                     # If no file is present calibrate and load
                     print('Calibration file not found. Calibrating...')
-                    captureReference(file_name, pipe, -1, True, True, 10, False)
-                    input('\nEnter anything to continuing collecting measurments.')
+                    captureReference(file_name, pipe, -1, True, True)
 
                     # Load point coordinates and pcd rotation matrix
                     calibration_json = loadCalibration(file_name)
@@ -90,7 +89,7 @@ if __name__ == '__main__':
                 time_format = book.add_format({'num_format': 'hh:mm:ss'})
                 
                 for list_name in list_names.split(','):
-                    print(f'Starting measurment for {list_name}:\n')
+                    input(f'Press enter to continue measurment for {list_name}:\n')
                     sheet = book.add_worksheet(list_name)
 
                     # define first line
