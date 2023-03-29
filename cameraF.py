@@ -4,6 +4,8 @@ import numpy as np
 import pyrealsense2 as rs
 import copy
 
+SCALE = 1.2
+
 # Initialize D435 depth camera, capture only depth data, not RGB
 def initCamera(capture_rgb = True):
     pipe = rs.pipeline()
@@ -111,8 +113,9 @@ def capture_pcd(pipe, mode):
 
 
 # get 3d image
-def getPCD(pipe, mode = False):     # The camera initially has offset and the transformation to meters is not 1:1. Previous scale = 0.225
+def getPCD(pipe, mode = False):     # The camera initially has offset and the transformation to meters is not 1:1. Previous scale = 1.2
     pcd = capture_pcd(pipe, mode)   # second parameter is downgrade koeficient in meters
+    pcd.scale(SCALE, center=(0, 0, 0))
     return pcd
 
 
@@ -209,8 +212,8 @@ def createBoundingBox(cropArea):
 
 
 # Remove noise from cropped PCD
-def removeOutliers(pcd, outlier_neigbours):
-    cl, ind = pcd.remove_statistical_outlier(nb_neighbors=outlier_neigbours, std_ratio=2.0)
+def removeOutliers(pcd, outlier_neigbours, _std_ratio = 2.0):
+    cl, ind = pcd.remove_statistical_outlier(nb_neighbors=outlier_neigbours, std_ratio=_std_ratio)
     return pcd.select_by_index(ind)
 
 
@@ -227,14 +230,3 @@ def createBox(width, height, depth):
 # open point cloud from file
 def loadPCD(file):
     return o3d.io.read_point_cloud("/realsence_application/assets/" + file, print_progress = True)
-
-
-# Draww with real colours
-def draw_registration_result_original_color(source, target, transformation):
-    source_temp = copy.deepcopy(source)
-    source_temp.transform(transformation)
-    o3d.visualization.draw_geometries([source_temp, target],
-                                      zoom=0.5,
-                                      front=[-0.2458, -0.8088, 0.5342],
-                                      lookat=[1.7745, 2.2305, 0.9787],
-                                      up=[0.3109, -0.5878, -0.7468])
