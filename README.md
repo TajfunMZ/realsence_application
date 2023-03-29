@@ -71,3 +71,9 @@ Unles specified otherwise, please keep your dependencies up to date.
   
   The first Integer defines the number of measurments you whish to take (increase this for higher accuracy)
   The second String defines the extencion that will appear in the name of the saved excel. Keep in mind that the name length has a limit
+
+
+### Future work:
+
+- Add a way to dinamicaly select an area to crop (in a shape that is more complex than a cube like object)
+- Automatically detect markers for area selection
