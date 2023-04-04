@@ -51,6 +51,7 @@ if __name__ == '__main__':
                     
                     milis_since_epoch = round(time.time()*1000)
                     save_file = file_name + '_' + name_extention + '_' + str(milis_since_epoch) + '.csv'
+                    _time = 2
                     # Open results csv and add time in miliseconds to not overwrite existing results
                     with open("./csv_results/" + save_file, 'w', newline='') as file:
                         writer = csv.writer(file)
@@ -58,7 +59,8 @@ if __name__ == '__main__':
 
                         # get measurments with a pause between each picture
                         for measurment in range(no_iterrations):
-                            measured_volume, zeroVolume = startMeasurment(calibration_json, pipe, measurment)
+                            measured_volume, zeroVolume = startMeasurment(calibration_json, pipe, measurment, _time)
+                            _time = round(time.time())
                             writer.writerow([measurment, round(measured_volume, 6), round(measured_volume - zeroVolume, 6), datetime.now()])
                     
                     print(f'Measurments finished. {no_iterrations} measurments saved in {save_file}. It took {(round(time.time()*1000) - milis_since_epoch)/1000} real time seconds to finish collecting data.')

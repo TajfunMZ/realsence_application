@@ -1,4 +1,4 @@
-import copy, math
+import copy, math, time
 from cameraF import createBoundingBox, removeOutliers, savePCD, getPCD, getMarkerPoints
 from mathF import preformVolumeCalculations, average
 from basic import selectAndRotate, save2json
@@ -12,6 +12,7 @@ def captureReference(calibrationFileName, pipe, zero_volume, automaticAlignment,
 
     # Get image
     pcd = getPCD(pipe, get_rgb)
+    _time = round(time.time())
     
     if(save_pcd):
         savePCD(pcd, calibrationFileName)
@@ -39,9 +40,11 @@ def captureReference(calibrationFileName, pipe, zero_volume, automaticAlignment,
 
     if zero_volume == -1:
         for i in range(no_of_ref_measurments):
-            pcd = getPCD(pipe, False)
+            
+            pcd = getPCD(pipe, False, _time)
+            _time = round(time.time())
+            
             cropArea = copy.deepcopy(save_cropArea)
-
             pcd.rotate(rotationMatrix, center=(0,0,0))
             cropBox = createBoundingBox(cropArea)
             pcd = pcd.crop(cropBox)

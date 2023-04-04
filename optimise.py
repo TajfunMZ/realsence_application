@@ -53,8 +53,7 @@ def findOptimalParameters(pipe, iterr, real_distance1 = 1, real_distance2 = 1):
     run_distances2 = []
     result = []
     
-    for calibrate in range(10):
-        getPCD(pipe, True)
+    getPCD(pipe, True)
 
     for x in iterr:
         print(f'\nScale factor: {x}')
