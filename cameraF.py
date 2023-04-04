@@ -2,6 +2,7 @@
 import open3d as o3d
 import numpy as np
 import pyrealsense2 as rs
+import time
 
 SCALE = 1.12
 
@@ -52,8 +53,9 @@ def initCamera(capture_rgb = True):
     advncd_mode_cfg.set_depth_table(depth_table)
 
     # Calibrate autoexposure
-    for x in range(20):
+    for x in range(5):
         pipe.wait_for_frames()
+        time.sleep(2)
 
     return pipe
 
@@ -70,17 +72,17 @@ def capture_pcd(pipe, mode):
     temp_filter = rs.temporal_filter()
     
     # Align images
-    for i in range(20):
+    for i in range(5):
         frame = pipe.wait_for_frames()
 
-        # Filter frame
-        dec_filter.process(frame)
-        tresh_filter.process(frame)
-        disparity_filter.process(frame)
-        temp_filter.process(frame)
-        
-        if mode:
-            frame = align.process(frame)
+    # Filter frame
+    dec_filter.process(frame)
+    tresh_filter.process(frame)
+    disparity_filter.process(frame)
+    temp_filter.process(frame)
+    
+    if mode:
+        frame = align.process(frame)
 
     if mode:
         color_frame = frame.get_color_frame()
@@ -112,7 +114,12 @@ def capture_pcd(pipe, mode):
 
 
 # get 3d image
-def getPCD(pipe, mode = False):     # The camera initially has offset and the transformation to meters is not 1:1!
+def getPCD(pipe, mode = False, _time = 2):     # The camera initially has offset and the transformation to meters is not 1:1!
+    
+    time_before_last_frame = _time - round(time.time())
+    if time_before_last_frame < 2:
+        time.sleep(2 - time_before_last_frame)
+
     pcd = capture_pcd(pipe, mode)   # second parameter is mode for automatic edge detecrion
     return pcd.scale(SCALE, center=(0, 0, 0))
 
