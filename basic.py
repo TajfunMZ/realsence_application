@@ -1,4 +1,4 @@
-import json, copy, time
+import json, copy
 import numpy as np
 from functools import reduce
 from mathF import preformVolumeCalculations, getRotationMatrix, rectangleFromPoints, createPlaneParametersFromPoints
@@ -119,7 +119,7 @@ def selectAndRotate(pcd_o, automaticAlignment, point_class_vector = [], targets_
             exit("\nThank you for flying air Tajfun, we hope you've had a pleasant journey and we wish to see you again soon. :)\n")
 
 # use calibrated data and camera feed to measure volume
-def startMeasurment(calibration_json, pipe, measurment, _time):
+def startMeasurment(calibration_json, pipe, measurment):
     # Extract saved data
     rotationMatrix = np.array(calibration_json['rotation'])
     cropArea = np.array(calibration_json['crop area'])
@@ -127,8 +127,7 @@ def startMeasurment(calibration_json, pipe, measurment, _time):
     lift_pcd = calibration_json['liftPcd']
 
     # Take a snapshot (pcd)
-    pcd = getPCD(pipe, False, _time)
-    _time = round(time.time())
+    pcd = getPCD(pipe, False)
 
     pcd.rotate(rotationMatrix, center=(0,0,0))
     # crop image to only include the container
