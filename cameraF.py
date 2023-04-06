@@ -114,12 +114,7 @@ def capture_pcd(pipe, mode):
 
 
 # get 3d image
-def getPCD(pipe, mode = False, _time = 2):     # The camera initially has offset and the transformation to meters is not 1:1!
-    
-    time_before_last_frame = _time - round(time.time())
-    if time_before_last_frame < 2:
-        time.sleep(2 - time_before_last_frame)
-
+def getPCD(pipe, mode = False):     # The camera initially has offset and the transformation to meters is not 1:1!
     pcd = capture_pcd(pipe, mode)   # second parameter is mode for automatic edge detecrion
     return pcd.scale(SCALE, center=(0, 0, 0))
 

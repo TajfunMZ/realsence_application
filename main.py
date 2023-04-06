@@ -47,7 +47,6 @@ if __name__ == '__main__':
                     
                     milis_since_epoch = round(time.time()*1000)
                     save_file = file_name + '_' + name_extention + '_' + str(milis_since_epoch) + '.csv'
-                    _time = 2
                     # Open results csv and add time in miliseconds to not overwrite existing results
                     with open("./csv_results/" + save_file, 'w', newline='') as file:
                         writer = csv.writer(file)
@@ -55,8 +54,7 @@ if __name__ == '__main__':
 
                         # get measurments with a pause between each picture
                         for measurment in range(no_iterrations):
-                            measured_volume, zeroVolume = startMeasurment(calibration_json, pipe, measurment, _time)
-                            _time = round(time.time())
+                            measured_volume, zeroVolume = startMeasurment(calibration_json, pipe, measurment)
                             writer.writerow([measurment, round(measured_volume, 6), round(measured_volume - zeroVolume, 6), datetime.now()])
                     
                     print(f'Measurments finished. {no_iterrations} measurments saved in {save_file}. It took {(round(time.time()*1000) - milis_since_epoch)/1000} real time seconds to finish collecting data.')
@@ -122,8 +120,17 @@ if __name__ == '__main__':
                     sheet.write_formula(2, 6, '=G2*1000')
                     sheet.write_formula(2, 7, '=H2*1000')
 
-                    sheet.write_string(4, 5, 'Volume offset:')
-                    sheet.write_formula(4, 6, '=B2-C2')
+                    sheet.write_string(4, 5, 'Max [m^3]:')
+                    sheet.write_formula(4, 7, '=MAX(C2:C' + last_row + ')')
+
+                    sheet.write_string(5, 5, 'Min [m^3]:')
+                    sheet.write_formula(5, 7, '=MIN(C2:C' + last_row + ')')
+
+                    sheet.write_string(6, 5, 'Standard deviation [m^3]:')
+                    sheet.write_formula(6, 7, '=STDEV(C2:C' + last_row + ')')
+
+                    sheet.write_string(8, 5, 'Volume offset:')
+                    sheet.write_formula(8, 6, '=B2-C2')
 
                     print(f'Measurment "{list_name}" finished. {no_iterrations} measurments saved in "{save_file}", sheet "{list_name}". It took {(round(time.time()*1000) - milis_since_epoch)/1000} real time seconds to finish collecting data.')
                 
